@@ -32,7 +32,7 @@
 <button class="filter" data-filter="Chinese">Chinese</button>
 <button class="filter" data-filter="Chai">Chai</button>
 </div>
-<div class="menuGrid">
+<div class="menuGrid" id="menuGrid">
 <article class="food" data-category="Snacks">
 <img src="https://images.unsplash.com/photo-1772729996007-40bad08b3c40?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Golden fried samosas" loading="lazy">
 <div class="foodBody"><div class="foodLine"><h3>Samosa</h3></div><p>Snacks</p></div>
@@ -81,5 +81,6 @@ document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{
 }));
 search.addEventListener('input',filterMenu);
 </script>
+<script type="module" src="firebase-public.js"></script>
 </body>
 </html>
