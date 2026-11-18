@@ -1,84 +1,26 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-storage.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-const ADMIN_UID = "eloqcoaGLMXNFPTMU90t5gA7lku2";
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app), db = getFirestore(app), storage = getStorage(app);
-const $ = id => document.getElementById(id);
-const say = (id, msg) => { if ($(id)) $(id).textContent = msg; };
-
-$("loginForm").addEventListener("submit", async e => {
-  e.preventDefault(); say("loginStatus", "Signing in…");
-  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value); say("loginStatus", ""); }
-  catch (err) { say("loginStatus", err.message); }
-});
-$("logoutBtn").addEventListener("click", () => signOut(auth));
-onAuthStateChanged(auth, async user => {
-  const allowed = !!user && user.uid === ADMIN_UID;
-  $("loginPanel").classList.toggle("hidden", allowed);
-  $("dashboard").classList.toggle("hidden", !allowed);
-  if (user && !allowed) { say("loginStatus", "This account is not authorised."); await signOut(auth); return; }
-  if (allowed) { say("signedIn", "Signed in as " + user.email); await loadSite(); await loadItems(); }
-});
-async function loadSite() {
-  try {
-    const s = await getDoc(doc(db, "siteContent", "home"));
-    const d = s.exists() ? s.data() : {};
-    $("heroTitleInput").value = d.heroTitle || "Good food. Great moments.";
-    $("heroSubtitleInput").value = d.heroSubtitle || "";
-    $("storyHeadingInput").value = d.storyHeading || "";
-    $("storyDescriptionInput").value = d.storyDescription || "";
-    $("addressInput").value = d.address || "";
-    $("phoneInput").value = d.phone || "";
-  } catch(e) { say("siteStatus", "Could not load settings: " + e.message); }
-}
-$("siteForm").addEventListener("submit", async e => {
-  e.preventDefault(); say("siteStatus", "Saving…");
-  try {
-    await setDoc(doc(db, "siteContent", "home"), {
-      heroTitle: $("heroTitleInput").value.trim(), heroSubtitle: $("heroSubtitleInput").value.trim(),
-      storyHeading: $("storyHeadingInput").value.trim(), storyDescription: $("storyDescriptionInput").value.trim(),
-      address: $("addressInput").value.trim(), phone: $("phoneInput").value.trim(), updatedAt: serverTimestamp()
-    }, {merge:true});
-    say("siteStatus", "Saved. Changes will appear on the public website.");
-  } catch(e) { say("siteStatus", "Save failed: " + e.message); }
-});
-$("menuForm").addEventListener("submit", async e => {
-  e.preventDefault(); say("menuStatus", "Uploading and saving…");
-  try {
-    let imageUrl = "";
-    const file = $("itemImage").files[0];
-    if (file) {
-      if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) throw new Error("Choose an image smaller than 5 MB.");
-      const path = "menu/" + Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const fileRef = ref(storage, path);
-      await uploadBytes(fileRef, file, {contentType:file.type});
-      imageUrl = await getDownloadURL(fileRef);
-    }
-    await addDoc(collection(db, "menuItems"), {
-      name: $("itemName").value.trim(), category: $("itemCategory").value.trim(),
-      price: $("itemPrice").value.trim(), description: $("itemDescription").value.trim(),
-      imageUrl, active: true, createdAt: serverTimestamp()
-    });
-    $("menuForm").reset(); say("menuStatus", "Menu item added."); await loadItems();
-  } catch(e) { say("menuStatus", "Could not save: " + e.message); }
-});
-async function loadItems() {
-  const list = $("menuList"); list.textContent = "Loading…";
-  try {
-    const snap = await getDocs(collection(db, "menuItems")); list.innerHTML = "";
-    if (snap.empty) { list.textContent = "No live items yet. The sample menu remains visible until you add items."; return; }
-    snap.forEach(s => {
-      const d = s.data(), row = document.createElement("div"); row.className = "adminItem";
-      const info = document.createElement("div"); info.textContent = d.name || "Untitled item";
-      const meta = document.createElement("small"); meta.textContent = (d.category || "Uncategorised") + (d.price ? " · ₹" + d.price : "");
-      info.appendChild(meta);
-      const del = document.createElement("button"); del.className = "danger"; del.type = "button"; del.textContent = "Delete";
-      del.addEventListener("click", async () => { if (!confirm("Delete " + (d.name || "this item") + "?")) return; try { await deleteDoc(doc(db,"menuItems",s.id)); await loadItems(); } catch(e) { say("globalStatus", e.message); } });
-      row.append(info, del); list.appendChild(row);
-    });
-  } catch(e) { list.textContent = "Could not load items: " + e.message; }
-}
+import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+import {getFirestore,collection,getDocs,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+import {getStorage,ref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-storage.js";
+import {firebaseConfig} from "./firebase-config.js";
+const ADMIN_UID="eloqcoaGLMXNFPTMU90t5gA7lku2",app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app),$=id=>document.getElementById(id),say=(id,t)=>{if($(id))$(id).textContent=t};
+const textDefs=[["announcement","Announcement strip"],["heroEyebrow","Hero small heading"],["heroTitle","Hero main heading"],["heroSubtitle","Hero description"],["heroPrimaryCta","Hero main button"],["heroSecondaryCta","Hero second button"],["ratingText","Rating text"],["introEyebrow","Welcome small heading"],["introHeading","Welcome heading"],["introParagraph1","Welcome paragraph 1"],["introParagraph2","Welcome paragraph 2"],["introLink","Welcome link text"],["menuEyebrow","Featured menu small heading"],["menuHeading","Featured menu heading"],["feature1Eyebrow","Feature card 1 small text"],["feature1Title","Feature card 1 title"],["feature2Eyebrow","Feature card 2 small text"],["feature2Title","Feature card 2 title"],["feature3Eyebrow","Feature card 3 small text"],["feature3Title","Feature card 3 title"],["storyEyebrow","Story small heading"],["storyHeading","Story heading"],["storyDescription","Story paragraph 1"],["storyParagraph2","Story paragraph 2"],["storyButton","Story button"],["visitEyebrow","Visit small heading"],["visitHeading","Visit heading"],["visitDescription","Visit description"],["directionsButton","Directions button"],["feedbackButton","Feedback button"],["footerTagline","Footer tagline"],["footerBottomLeft","Footer bottom left"],["footerBottomRight","Footer bottom right"]];
+const imageDefs=[["heroImage","Hero background"],["introImage","Welcome image"],["feature1Image","Featured image 1"],["feature2Image","Featured image 2"],["feature3Image","Featured image 3"],["storyMainImage","Story main image"],["storySmallImage","Story secondary image"],["visitImage","Visit section image"]];
+const linkDefs=[["address","Restaurant address","textarea"],["phone","Phone number","text"],["directionsUrl","Google Maps URL","url"],["feedbackUrl","Feedback page URL","url"],["menuUrl","Menu page URL","url"],["instagramUrl","Instagram URL","url"],["whatsappUrl","WhatsApp URL","url"]];
+$("textFields").innerHTML=textDefs.map(([k,l])=>'<label>'+l+(["heroSubtitle","introParagraph1","introParagraph2","storyDescription","visitDescription"].includes(k)?'<textarea id="txt-'+k+'"></textarea>':'<input id="txt-'+k+'" type="text">')+'</label>').join("");
+$("imageFields").innerHTML=imageDefs.map(([k,l])=>'<label>'+l+'<input id="url-'+k+'" type="url" placeholder="Image URL (optional)"><input id="file-'+k+'" type="file" accept="image/*"><img id="preview-'+k+'" class="imagePreview" alt="Preview"></label>').join("");
+$("linkFields").innerHTML=linkDefs.map(([k,l,t])=>'<label>'+l+(t==="textarea"?'<textarea id="lnk-'+k+'"></textarea>':'<input id="lnk-'+k+'" type="'+t+'">')+'</label>').join("");
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".pane").forEach(x=>x.classList.toggle("active",x.id==="pane-"+b.dataset.tab))}));
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();say("loginStatus","Signing in…");try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){say("loginStatus",e.message)}});
+$("logoutBtn").addEventListener("click",()=>signOut(auth));
+onAuthStateChanged(auth,async u=>{const ok=!!u&&u.uid===ADMIN_UID;$("loginPanel").classList.toggle("hidden",ok);$("dashboard").classList.toggle("hidden",!ok);if(u&&!ok){say("loginStatus","This account is not authorised.");await signOut(auth);return}if(ok){say("signedIn","Signed in as "+u.email);await loadSettings();await loadItems()}});
+async function getSettings(){const s=await getDoc(doc(db,"siteContent","home"));return s.exists()?s.data():{}}
+async function loadSettings(){try{const d=await getSettings();for(const [k] of textDefs)$("txt-"+k).value=d[k]??"";for(const [k] of imageDefs){$("url-"+k).value=d[k]||"";$("preview-"+k).src=d[k]||""}for(const [k] of linkDefs)$("lnk-"+k).value=d[k]||""}catch(e){say("textStatus","Load failed: "+e.message)}}
+$("textForm").addEventListener("submit",async e=>{e.preventDefault();say("textStatus","Saving…");try{const d={};for(const [k] of textDefs)d[k]=$("txt-"+k).value.trim();d.updatedAt=serverTimestamp();await setDoc(doc(db,"siteContent","home"),d,{merge:true});say("textStatus","All text settings saved.")}catch(e){say("textStatus","Save failed: "+e.message)}});
+async function upload(file,folder){if(!file)return "";if(!file.type.startsWith("image/")||file.size>5*1024*1024)throw Error("Select an image under 5 MB.");const r=ref(storage,folder+"/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_"));await uploadBytes(r,file,{contentType:file.type});return getDownloadURL(r)}
+$("imageForm").addEventListener("submit",async e=>{e.preventDefault();say("imageStatus","Uploading…");try{const d={};for(const [k] of imageDefs){const f=$("file-"+k).files[0],url=f?await upload(f,"site"):$("url-"+k).value.trim();if(url)d[k]=url}d.updatedAt=serverTimestamp();await setDoc(doc(db,"siteContent","home"),d,{merge:true});say("imageStatus","Images saved.");await loadSettings()}catch(e){say("imageStatus","Failed: "+e.message)}});
+$("linkForm").addEventListener("submit",async e=>{e.preventDefault();say("linkStatus","Saving…");try{const d={};for(const [k] of linkDefs)d[k]=$("lnk-"+k).value.trim();d.updatedAt=serverTimestamp();await setDoc(doc(db,"siteContent","home"),d,{merge:true});say("linkStatus","Links and contact details saved.")}catch(e){say("linkStatus","Failed: "+e.message)}});
+function resetForm(){$("menuForm").reset();$("editingId").value="";$("itemActive").checked=true;$("editorTitle").textContent="Add a menu item";$("menuSubmit").textContent="Add item";$("cancelEdit").classList.add("hidden")}
+$("cancelEdit").addEventListener("click",resetForm);
+$("menuForm").addEventListener("submit",async e=>{e.preventDefault();say("menuStatus","Saving…");try{const id=$("editingId").value,f=$("itemImage").files[0];let imageUrl=$("itemImageUrl").value.trim();if(f)imageUrl=await upload(f,"menu");const d={name:$("itemName").value.trim(),category:$("itemCategory").value.trim(),price:$("itemPrice").value.trim(),description:$("itemDescription").value.trim(),imageUrl,active:$("itemActive").checked,updatedAt:serverTimestamp()};if(id)await updateDoc(doc(db,"menuItems",id),d);else{d.createdAt=serverTimestamp();await addDoc(collection(db,"menuItems"),d)}say("menuStatus",id?"Menu item updated.":"Menu item added.");resetForm();await loadItems()}catch(e){say("menuStatus","Failed: "+e.message)}});
+async function loadItems(){const list=$("menuList");list.textContent="Loading…";try{const snap=await getDocs(collection(db,"menuItems"));list.innerHTML="";if(snap.empty){list.textContent="No live items saved yet. Add your first item above. Sample cards remain as fallback.";return}snap.forEach(s=>{const d=s.data(),row=document.createElement("div");row.className="item";const img=document.createElement("img");img.src=d.imageUrl||"images/menu/chai.webp";img.alt=d.name||"Dish";const info=document.createElement("div"),strong=document.createElement("strong"),small=document.createElement("small");strong.textContent=d.name||"Untitled";small.textContent=(d.category||"Other")+" · "+(d.price!==""&&d.price!==undefined?"₹"+d.price:"No price")+" · "+(d.active===false?"Hidden":"Visible");info.append(strong,small);const acts=document.createElement("div");acts.className="itemActions";const edit=document.createElement("button");edit.className="secondary";edit.type="button";edit.textContent="Edit";edit.onclick=()=>{$("editingId").value=s.id;$("itemName").value=d.name||"";$("itemCategory").value=d.category||"";$("itemPrice").value=d.price??"";$("itemImageUrl").value=d.imageUrl||"";$("itemDescription").value=d.description||"";$("itemActive").checked=d.active!==false;$("editorTitle").textContent="Edit menu item";$("menuSubmit").textContent="Save changes";$("cancelEdit").classList.remove("hidden");document.querySelector('[data-tab="menu"]').click();$("menuForm").scrollIntoView({behavior:"smooth"})};const toggle=document.createElement("button");toggle.className="secondary";toggle.type="button";toggle.textContent=d.active===false?"Show":"Hide";toggle.onclick=async()=>{try{await updateDoc(doc(db,"menuItems",s.id),{active:d.active===false,updatedAt:serverTimestamp()});await loadItems()}catch(e){say("globalStatus",e.message)}};const del=document.createElement("button");del.className="danger";del.type="button";del.textContent="Delete";del.onclick=async()=>{if(!confirm("Permanently delete "+(d.name||"this item")+"?"))return;try{await deleteDoc(doc(db,"menuItems",s.id));await loadItems()}catch(e){say("globalStatus",e.message)}};acts.append(edit,toggle,del);row.append(img,info,acts);list.append(row)})}catch(e){list.textContent="Could not load menu: "+e.message}}
