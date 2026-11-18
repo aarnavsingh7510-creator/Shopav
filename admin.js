@@ -11,6 +11,7 @@ $("textFields").innerHTML=textDefs.map(([k,l])=>'<label>'+l+(["heroSubtitle","in
 $("imageFields").innerHTML=imageDefs.map(([k,l])=>'<label>'+l+'<input id="url-'+k+'" type="url" placeholder="Image URL (optional)"><input id="file-'+k+'" type="file" accept="image/*"><img id="preview-'+k+'" class="imagePreview" alt="Preview"></label>').join("");
 $("linkFields").innerHTML=linkDefs.map(([k,l,t])=>'<label>'+l+(t==="textarea"?'<textarea id="lnk-'+k+'"></textarea>':'<input id="lnk-'+k+'" type="'+t+'">')+'</label>').join("");
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".pane").forEach(x=>x.classList.toggle("active",x.id==="pane-"+b.dataset.tab))}));
+if(window.matchMedia("(max-width:650px)").matches){document.querySelector('[data-tab="menu"]').click()}
 $("loginForm").addEventListener("submit",async e=>{e.preventDefault();say("loginStatus","Signing in…");try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){say("loginStatus",e.message)}});
 $("logoutBtn").addEventListener("click",()=>signOut(auth));
 onAuthStateChanged(auth,async u=>{const ok=!!u&&u.uid===ADMIN_UID;$("loginPanel").classList.toggle("hidden",ok);$("dashboard").classList.toggle("hidden",!ok);if(u&&!ok){say("loginStatus","This account is not authorised.");await signOut(auth);return}if(ok){say("signedIn","Signed in as "+u.email);await loadSettings();await loadItems()}});
