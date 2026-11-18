@@ -3,3 +3,22 @@
 @media(max-width:900px){.links{gap:15px}.navCta{display:none}.introGrid,.storyGrid{gap:45px}.heroStamp{margin-right:0}.visitPanel{gap:35px}.featureCard{height:300px}}
 @media(max-width:700px){.wrap{width:min(100% - 34px,560px)}.nav{height:70px}.links{display:none;position:absolute;top:70px;left:0;right:0;background:#1c1612;padding:22px;flex-direction:column;gap:20px;border-bottom:1px solid var(--line)}.links.open{display:flex}.mobile{display:block}.hero{min-height:610px;background-position:58% center}.hero:before{background:linear-gradient(90deg,rgba(15,10,8,.95),rgba(15,10,8,.65)),linear-gradient(0deg,rgba(15,10,8,.65),transparent)}.heroInner{padding:75px 0 100px}.heroStamp{display:none}.hero h1{font-size:clamp(50px,14vw,72px)}.heroBottom{padding:13px 17px;font-size:7px}.section{padding:70px 0}.introGrid,.storyGrid,.visitPanel{grid-template-columns:1fr;gap:45px}.introVisual{max-width:440px}.introVisual img{height:330px}.introText h2,.section h2{font-size:42px}.sectionHead{align-items:start;flex-direction:column}.featureGrid{grid-template-columns:1fr 1fr}.featureLarge{grid-column:span 2}.featureCard{height:250px}.featureLarge{height:300px}.featureLabel{left:15px;bottom:16px}.featureLabel strong{font-size:21px}.storyPhotos{height:360px;max-width:520px}.storyPhotoMain{height:285px}.storyPhotoSmall{height:160px}.visitImage img{height:300px}.visitDetails{gap:25px;flex-wrap:wrap}.footerTop{align-items:flex-start;gap:22px;flex-wrap:wrap}.footerTop p{order:3;width:100%;margin:0}.footerLinks{gap:14px;flex-wrap:wrap}.footerBottom{font-size:7px;gap:10px}.menuGrid{grid-template-columns:repeat(2,1fr)}.food img{height:145px}.foodBody{padding:12px}.pageIntro{padding:45px 0 20px}}
 @media(max-width:420px){.top{font-size:7px;gap:10px}.featureGrid{grid-template-columns:1fr}.featureLarge{grid-column:auto}.featureCard,.featureLarge{height:250px}.menuGrid{gap:10px}.food img{height:120px}.food h3{font-size:12px}.footerLinks{font-size:9px}.footerBottom span:last-child{display:none}}
+
+/* Subtle motion and scroll reveals */
+@keyframes heroRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes softZoom{from{transform:scale(1.07);opacity:.75}to{transform:scale(1);opacity:1}}
+@keyframes floatBadge{0%,100%{transform:translateY(0) rotate(9deg)}50%{transform:translateY(-9px) rotate(7deg)}}
+.heroCopy .eyebrow{animation:heroRise .65s both}
+.heroCopy h1{animation:heroRise .8s .08s both}
+.heroCopy .lead{animation:heroRise .8s .17s both}
+.heroCopy .actions{animation:heroRise .8s .25s both}
+.heroRating{animation:heroRise .8s .34s both}
+.hero{background-size:cover;animation:softZoom 1.4s ease-out both}
+.heroStamp{animation:floatBadge 5s ease-in-out infinite}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1)}
+.reveal.is-visible{opacity:1;transform:translateY(0)}
+.featureCard,.food,.tile,.introVisual img,.storyPhotos img,.visitImage img{transition:transform .45s ease,box-shadow .45s ease}
+.featureCard:hover,.food:hover,.tile:hover{transform:translateY(-6px);box-shadow:0 18px 42px rgba(0,0,0,.25)}
+.introVisual img:hover,.storyPhotos img:hover,.visitImage img:hover{transform:scale(1.025)}
+.btn,.textLink,.underLink,.links a{transition:all .25s ease}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
