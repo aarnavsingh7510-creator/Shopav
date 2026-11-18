@@ -103,3 +103,47 @@ footer .brandMark{border-radius:50%}
 @media(prefers-reduced-motion:reduce){
   .filter:hover{transform:none}
 }
+
+
+/* Menu and feedback page footer: clear, balanced two-sided layout */
+.footerRow{
+  width:min(1180px,calc(100% - 48px));
+  min-height:104px;
+  margin:0 auto;
+  padding:25px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  letter-spacing:.025em;
+  border-top:1px solid var(--line);
+}
+.footerRow strong{
+  color:var(--cream);
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.07em;
+}
+.footerRow>div:last-child{
+  color:var(--orange);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+@media(max-width:700px){
+  .footerRow{
+    width:calc(100% - 34px);
+    min-height:0;
+    padding:23px 0;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:7px;
+    font-size:13px;
+  }
+  .footerRow strong{font-size:16px}
+  .footerRow>div:last-child{font-size:11px}
+}
