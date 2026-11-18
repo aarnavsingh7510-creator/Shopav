@@ -4,9 +4,10 @@ service firebase.storage {
     function isAdmin() {
       return request.auth != null && request.auth.uid == "eloqcoaGLMXNFPTMU90t5gA7lku2";
     }
-    match /menu/{fileName} {
-      allow read: if true;
+    match /{folder}/{fileName} {
+      allow read: if folder == "menu" || folder == "site";
       allow write: if isAdmin()
+        && (folder == "menu" || folder == "site")
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
     }
