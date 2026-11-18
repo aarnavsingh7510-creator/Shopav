@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Restaurant Admin | Hum Tum Aur Chai</title><link rel="stylesheet" href="styles.css"><style>
+.adminWrap{max-width:900px;margin:45px auto 90px}.adminCard{background:var(--panel);border:1px solid var(--line);padding:25px;margin:20px 0}.adminCard h2{font:700 26px 'Playfair Display';margin:0 0 18px}.adminForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.adminForm label{display:block;color:var(--muted);font-size:11px}.adminForm input,.adminForm textarea,.adminForm select{display:block;width:100%;margin-top:6px;padding:12px;background:#17120f;border:1px solid var(--line);color:var(--cream);font:inherit}.adminForm textarea{min-height:85px;resize:vertical}.adminForm .wide{grid-column:1/-1}.adminActions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:15px}.adminItem{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:12px 0;border-bottom:1px solid var(--line)}.adminItem small{display:block;color:var(--muted);margin-top:4px}.danger{background:#8e3327;color:white;border:0;padding:9px 12px;cursor:pointer}.status{color:var(--orange);font-size:12px;min-height:18px}.hidden{display:none!important}@media(max-width:600px){.adminForm{grid-template-columns:1fr}.adminForm .wide{grid-column:auto}.adminCard{padding:18px}}
+</style></head><body><div class="top">HUM TUM AUR CHAI <b>✦</b> ADMIN PANEL</div><header><div class="wrap nav"><a class="brand" href="index.html"><span class="brandMark">HTC</span><span>HUM TUM <i>AUR CHAI</i><small>WEBSITE ADMINISTRATION</small></span></a><a class="btn ghost" href="index.html">View website ↗</a></div></header>
+<main class="wrap adminWrap"><div class="eyebrow">OWNER ACCESS</div><h1 class="pageTitle">Website admin</h1>
+<section class="adminCard" id="loginPanel"><h2>Sign in</h2><form id="loginForm" class="adminForm"><label class="wide">Admin email<input id="email" type="email" autocomplete="username" required></label><label class="wide">Password<input id="password" type="password" autocomplete="current-password" required></label><div class="wide adminActions"><button class="btn" type="submit">Sign in</button><span class="status" id="loginStatus"></span></div></form></section>
+<div id="dashboard" class="hidden">
+<div class="adminActions"><p id="signedIn" class="status"></p><button class="btn ghost" id="logoutBtn" type="button">Sign out</button></div>
+<section class="adminCard"><h2>Homepage content</h2><form id="siteForm" class="adminForm">
+<label class="wide">Hero heading<input id="heroTitleInput" placeholder="Good food. Great moments."></label>
+<label class="wide">Hero subtitle<textarea id="heroSubtitleInput"></textarea></label>
+<label class="wide">Story heading<input id="storyHeadingInput"></label>
+<label class="wide">Story description<textarea id="storyDescriptionInput"></textarea></label>
+<label class="wide">Restaurant address<textarea id="addressInput"></textarea></label>
+<label class="wide">Phone number<input id="phoneInput"></label>
+<div class="wide adminActions"><button class="btn" type="submit">Save homepage content</button><span class="status" id="siteStatus"></span></div></form></section>
+<section class="adminCard"><h2>Add a menu item</h2><form id="menuForm" class="adminForm">
+<label>Dish name<input id="itemName" required></label><label>Category<input id="itemCategory" placeholder="Chinese, Chai, Snacks..." required></label>
+<label>Price (₹)<input id="itemPrice" type="number" min="0" step="0.01"></label><label>Food image<input id="itemImage" type="file" accept="image/*"></label>
+<label class="wide">Description<textarea id="itemDescription"></textarea></label>
+<div class="wide adminActions"><button class="btn" type="submit">Add menu item</button><span class="status" id="menuStatus"></span></div></form></section>
+<section class="adminCard"><h2>Current menu items</h2><div id="menuList">Loading menu…</div></section>
+<p class="status" id="globalStatus"></p></div></main><script type="module" src="admin.js"></script></body></html>
