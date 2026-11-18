@@ -22,3 +22,84 @@
 .introVisual img:hover,.storyPhotos img:hover,.visitImage img:hover{transform:scale(1.025)}
 .btn,.textLink,.underLink,.links a{transition:all .25s ease}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+
+
+/* Final visual polish — safe CSS-only shape and depth pass */
+:root{
+  --surface-shadow:0 14px 38px rgba(0,0,0,.20);
+  --surface-shadow-hover:0 20px 46px rgba(0,0,0,.30);
+}
+.btn{
+  border-radius:12px;
+  padding:14px 21px;
+  box-shadow:0 5px 16px rgba(255,155,69,.12);
+}
+.btn.ghost{box-shadow:none}
+.btn:focus-visible,.textLink:focus-visible,.underLink:focus-visible,
+.links a:focus-visible,.filter:focus-visible,button:focus-visible,
+input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--orange);
+  outline-offset:3px;
+}
+.brandMark{box-shadow:inset 0 0 0 4px rgba(255,155,69,.06)}
+.heroStamp{backdrop-filter:blur(5px);background:rgba(23,18,15,.16)}
+.introVisual img,.storyPhotoMain,.storyPhotoSmall,.visitImage img{
+  border-radius:18px;
+  box-shadow:var(--surface-shadow);
+}
+.introVisual:before{border-radius:18px}
+.imageTag,.photoNote{border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.22)}
+.featureCard{
+  border-radius:18px;
+  box-shadow:var(--surface-shadow);
+}
+.featureCard img{border-radius:inherit}
+.featureOverlay{border-radius:inherit}
+.food{
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;
+}
+.food img{border-radius:15px 15px 0 0}
+.foodBody{padding:19px}
+.food h3{line-height:1.4}
+.filter{
+  border-radius:999px;
+  padding:11px 17px;
+  transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease;
+}
+.filter:hover{transform:translateY(-2px)}
+.menuSearch{
+  border-radius:12px;
+  padding:15px 17px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.15);
+}
+.feedbackCard,.findBox{
+  border-radius:18px;
+  box-shadow:var(--surface-shadow);
+}
+.feedbackCard{padding:34px}
+.findBox{padding:34px}
+.visitImage img{border-radius:18px}
+.visitImageCaption{border-radius:0 0 18px 18px}
+footer .brandMark{border-radius:50%}
+.links a{position:relative}
+.links a:not(.active):after{
+  content:"";position:absolute;left:0;right:100%;bottom:-7px;height:1px;
+  background:var(--orange);transition:right .22s ease;
+}
+.links a:hover:after{right:0}
+@media(hover:hover){
+  .food:hover{border-color:rgba(255,155,69,.42);box-shadow:var(--surface-shadow-hover)}
+  .featureCard:hover{box-shadow:var(--surface-shadow-hover)}
+}
+@media(max-width:700px){
+  .foodBody{padding:13px}
+  .feedbackCard,.findBox{padding:22px;border-radius:15px}
+  .introVisual img,.storyPhotoMain,.storyPhotoSmall,.visitImage img{border-radius:14px}
+  .featureCard{border-radius:15px}
+  .btn{border-radius:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  .filter:hover{transform:none}
+}
